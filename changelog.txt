@@ -1,0 +1,117 @@
+Change Log:
+
+15-03-09: -Unregistering windowclass on failure of window creation.
+09-06-08: -Made pop3 subject checking work.
+		  -Fixed bug where AcidMail could go into an endless loop if a connection error
+			occurred during graceful shutdown.
+08-06-08: -Wrote pop3 subject checking code, still buggy though.
+07-06-08: -Added first subject checking code.
+		  -Removed bang.cpp/.h.
+05-06-08: -Fixed connection error reporting a socket error number when there was no socket
+			error.
+13-05-08: -Made IMAP work again, cleaned up some code and reduced file size.
+12-05-08: -Added !AcidMailSetPass (server) (user) (password). Before saved passwords couldn't
+			be modified once stored, now they can.
+11-05-08: -Put server responses in errors when applicable.
+10-05-08: -Error interface now takes strings instead of numbers, $AcidMail<Name>Error$ now
+			returns the error string.
+		  -Put socket in in mailbox object thus no longer sending sockets around in function
+			calls.
+23-04-08: -Replaced ugly imap recent mail number checking algorithm with a slightly less ugly
+			algorithm.
+27-02-08: -Fixed some error messages which weren't working.
+26-02-08: -More graceful closing of connection if whole communication succeeds.
+19-02-08: -Using getaddrinfo now instead of gethostbyname and gethostbyaddr. This doesn't
+			just make the code simpler, but now AcidMail also supports domains which have
+			multiple homes. It will try connect to all of them untill it works. This should
+			make AcidMail more reliable.
+		  -Made AcidMail use Winsock 2.2. This breaks compatibility with old (pre-osr2) win95
+			builds.
+31-01-08: -Fixed regression introduced in 0.7 pre-build.
+11-01-08: -Put WSAStartup in main
+		  -Added an extra error message (10).
+10-01-08: -Added 2 missing mailbox notifications to 2 warnings.
+08-01-08: -Did some minor cleanup/changes.
+02-01-08: -Mailboxes now export their error number to $AcidMail<Name>Error$.
+		  -Some code cleanup.
+30-12-07: -Fixed a memory leak in the Encrypt function. (now there's is no more code from LSMail!)
+		  -Fixed a posible race condition when closing the mailchecking thread.
+
+Version 0.6:
+
+29-12-07: -Added new multiline syntax. This was needed because the single line syntax would
+			become unreadable if new features we're added.
+		  -Added the ability to specify which folder should be checked when using imap.
+		  -Code cleanup by using initialization lists.
+11-10-07: -Added some safety checks for window creating and some minor cleanups.
+16-08-07: -Timer is now called after the mail checking thread is done instead of during. This
+			prevents the thread from running twice (if the thread lasts longer than
+			$AcidMailTimer$).
+30-07-07: -Changed hwndParent in DialogBox call to NULL
+		  -Commented out Passproc in main.h
+
+Version 0.5:
+
+28-07-07: -Got IMAP checking to work!
+		  -Removed all server debugging code. Will now use normal debug and sniffing instead.
+27-07-07: -Fixed a memory leak. The CheckMailThread's handle wasn't removed thus the stack space
+			would remain in memory.
+		  -Rewrote Pop3Check() and reorganised normal and debug versions of ***Check() functions.
+22-07-07: -Rewrote some more of Mailcheck(). closesocket() and WSACleanup() are now only called
+			in the error handler or at the end of Mailcheck().
+20-07-07: -Rewrote most of Mailcheck(), this removed redundant code and made NumMail an unsigned
+			int so the maximum number of mail is now 65535.
+14-07-07: -Made bigger parts of the Acidmail and Mailbox class private. Mailbox::ClearMail created.
+		  -An extern pointer to the acidmail instance in mailbox.cpp is removed.
+		  -Rewrote the way mailbox errors are handled: mailbox error is now flagged in Mail struct
+			and	returned to the checkmail thread. This fixes the problem where ErrorCmd was fired
+			for every failed mailbox.
+03-07-07: -Begon writing of ImapCheck() (Imap mail checking).
+
+Version 0.3:
+
+28-06-07: -All globals needed from other files are now included with extern instead of #include,
+			excluding const value's (version info).
+		  -Fixed encrypted password storing.
+27-06-07: -The Acidmail constructor no longer takes arguments. hWnd and hInst are gotten from
+			main.h via extern.
+		  -Removed AcidMailNoMessageBoxes, since there aren't any message boxes (yet).
+26-06-07: -Implemented encrypted password storing. (Copied and then slightly modified LsMail's
+			method :P) Now you don't need to put your password in an .rc file anymore. Instead a
+			dialogue will popup to ask you for it the first time you connect to a server.
+		  -Added support for using the ip address of the host.
+		  -Added support for specifying the port to connect to: "mail.host.com:965". If no ":" is 
+			found, port 110 is used
+24-06-07: -Decided to be nicer to mailservers: Now sending quit before closing socket.
+23-06-07: -Increased buffers for *line reading. Caused crash when misconfiguring.
+		  -Increased buffer for number of mails (max is now 32768 instead of 9999).
+14-06-07: -Made AcidMailErrorCmd work.
+		  -Made ErrorHandler which posts errors in the logfile.
+12-06-07: -Made Reading *lines a bit safer.
+		  -Added AcidMailFoundMailCmd: fired if it finds mail, regardless of the value before.
+07-06-07: -Added AcidMailZeroMailCmd: fired if it finds 0 mail even if there was 0 before checking.
+
+Version 0.2:
+
+06-06-07: -Made !AcidMailClearMail correctly set all value's to 0 and made it fire NoMailCmd.
+05-06-07: -Disabled checking mail when AcidMailTimer is set to 0.
+04-06-07: -Made the readme using xDocs.
+
+Version 0.1:
+
+04-06-07: -Got Cmd's working although I have no idea what I've changed.
+02-06-07: -Added Cmd's ("AcidMailMailCmd", AcidMailNoMailCmd etc.) Only "AcidMailErrorCmd"
+			isn't implemented yet.
+		  -Added support for more than 9 mails.
+		  -Made NumMails return -1 on failure.
+01-06-07: -Got mail checking to work propperly. (Need to make it more failsafe though.)
+30-05-07: -Implemented actual checking of mail.
+19-03-07: -Implemented encryption of password (copied from LsMail-4.4). For pass saving.
+17-03-07: -Made CheckMail() work in a seperate thread.
+16-03-07: -Made timer work (calls checkmail every X seconds)
+15-03-07: -Fixed a buffer overflow error.
+14-03-07: -Made Acidmail destructor destroy Mailboxes.
+07-03-07: -Made Mailbox class and made *AcidMailbox parser.
+05-03-07: -Implemented reading the RC settings.
+24-02-07: -Added support for LM_REFRESH.
+22-02-07: -Started building the Acidmail class, used AcidModule template for module basis.

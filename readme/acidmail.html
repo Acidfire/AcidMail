@@ -1,0 +1,201 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>ReadMe: AcidMail</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<meta name="Content-Language" content="en">
+		<meta name="generator" content="xDocs">
+		<meta name="robots" content="index,follow">
+		<meta name="revisit-after" content="7 days">
+		<link rel="stylesheet" type="text/css" href="screen.css" media="screen">
+			<link rel="stylesheet" type="text/css" href="print.css" media="print">
+	</head>
+	<body id="topglobal">
+		<!-- ======================================================================== --> 
+		<div id="header">
+			<img src="litestep_logo.png" width="100" height="100" alt="LiteStep Logo">
+			<h1>ReadMe: AcidMail</h1>
+		</div>
+		<!-- ======================================================================== -->
+		<td width="100%" valign="top">
+			<div id="content-area">
+				<p><strong>AcidMail Docs Version 0.6</strong></p>
+<a name="contents"></a>
+<h1>Contents</h1>
+
+<p><a href="#about" class="PageLink">About</a><br/>
+<a href="#install" class="PageLink">Installation</a><br/>
+<a href="#usage" class="PageLink">Usage</a><br/>
+<a href="#settings" class="PageLink">Step.rc Settings</a><br/>
+<a href="#bangs" class="PageLink">!Bang Commands</a><br/>
+<a href="#evars" class="PageLink">Exported Variables (evars)</a><br/>
+<a href="#example" class="PageLink">Example Configuration</a><br/>
+<a href="#ssl" class="PageLink">Poormans SSL</a><br/>
+<a href="#todo" class="PageLink">Still to be done</a><br/>
+
+<a href="#version" class="PageLink">Version History</a><br/>
+<a href="#author" class="PageLink">Author</a></p>
+<a name="about"></a>
+<h1>About</h1>
+<p>This module was made from scratch to replace LsMail. I got frustrated that I still had modules that didn't use xPaintClass. So I decided to make a replacement for one of the last ones I had running: LsMail. Since I didn't even use the graphics part of the module I decided to make the module only use evars and events so it can display info on a label or something similar.</p>
+<p>Currently AcidMail only support Pop3 and IMAP mailboxes, but in the future it will hopefully support native secure connections as well. Currently you can use AcidMail for secure connections using <a href="#ssl" class="PageLink">this workaround</a> if you have ssh access to that server.</p>
+<p>If you find anything that doesn't work please e-mail me (see Author). This read-me was made using Andymon's <a href="http://www.xdocs.ls-universe.info/" class="ExternalLink" target="_blank">xDocs</a> If there is anything wrong on this page please change it <a href="http://www.xdocs.ls-universe.info/pie.php?AcidMail" class="ExternalLink" target="_blank">here</a>.</p>
+
+<a name="install"></a>
+<h1>Installation</h1>
+<p>Simply load it by putting *NetLoadModule AcidMail-&lt;version&gt; in your theme.rc or another .rc file. (Change the version number in the example if you use a different version!)</p>
+<pre>*NetLoadModule AcidMail-1.0
+</pre>
+<p>You can also load it the old way by extracting the module manually to you $ModuleDir$ and then putting LoadModule &quot;$ModulesDir$Acidmail.dll&quot; in your step.rc.</p>
+<pre>LoadModule &quot;$ModulesDir$Acidmail.dll&quot;
+
+</pre>
+<a name="usage"></a>
+<h1>Usage</h1>
+<p>Set-up a mailbox using *AcidMailbox then use AcidMailMailCmd and AcidMailNoMailCmd to show and hide a label which shows $AcidMailNumMail$. Check out the <a href="#example" class="PageLink">example</a> for a complete working set-up. Ofcourse there are more advanced ways for showing info. See the <a href="#events" class="PageLink">events</a> and <a href="#evars" class="PageLink">evars</a> below.</p>
+<p>When using IMAP AcidMail does not return the amount of mail in the inbox! Instead it only return the amount marked as recent. Those are mails which are not yet viewed by a mail client. I did this so IMAP works exactly the same as POP3.</p>
+
+<p>Maybe in a future version I will allow you to choose to look for something else than mail marked as recent.</p>
+<a name="settings"></a>
+<h1>RC Settings</h1>
+<p>All settings in this file show an example setting with it, which is also the default unless stated otherwise.</p>
+<p><code>*AcidMailbox name</code><br/>
+This setting is required for every mailbox you wish to check. They can be configured with the settings below.</p>
+<p><code>AcidMailTimer 5</code><br/>
+How often AcidMail should check for mail (in minutes). If this is 0 no timer will be set and all checking will have to be done manually.</p>
+<h2>Mailbox settings</h2>
+
+<h3>Multi line</h3>
+<p>Each setting in this section requires the mailbox name to be put in front of it.</p>
+<p><code>Type pop3</code><br/>
+The mailbox type must be pop3 or imap (can be simap or spop3 in a later release hopefully).</p>
+<p><code>Server home.server.com</code><br/>
+The server the mailbox is located at. (the example isn't the default for this one)</p>
+<p><code>User anonymous</code><br/>
+The username for the mailbox.</p>
+<p><code>Folder inbox</code><br/>
+
+Change this to look in another folder than inbox when using IMAP.</p>
+<p><code>Port 110</code><br/>
+The port defaults to 110 when using POP3 and 143 for IMAP. If you need another port set this to something else.</p>
+<p><code>Password password</code><br/>
+This setting is optional, if no password is found a dialog will pop up the first time asking for it. It is then stored encrypted on your system so you won't have to enter the password more than once. If for some reason you want to set the password in the rc files use this setting. (the example isn't the default for this one)</p>
+<h3>Single line</h3>
+<p>This is the old way of configuring AcidMail. It replaces the simple *AcidMailbox line. It's shorter because it only takes one line, but it's not recommended since not all options can be configured this way and it's hard to use with scripting. You cannot use any of the multi line settings when using this syntax!</p>
+<p><code>*AcidMailbox name type server(:port) username (password)</code><br/>
+- name can be any name you like, for example &quot;home&quot; (you don't need quotes).<br/>
+
+- type must be pop3 or imap (can be simap or spop3 in a later release hopefully).<br/>
+- server is the address of your mail server, for example mail.server.com. You can also specify the port here behind a &quot;:&quot; for example mail.server.com:110. For Pop3 it defaults to 110 and for IMAP it defaults to 143.<br/>
+- username is your user name, for example acidfire.<br/>
+- password is your password. This setting is optional, if no password is found a dialog will pop up the first time asking for it. It is then stored encrypted on your system so you won't have to enter the password more than once.</p>
+<a name="events"></a>
+<h2>Events</h2>
+<p><code>AcidMailMailCmd !none</code><br/>
+Bang to be executed when there is mail and there was 0 mail before.</p>
+
+<p><code>AcidMailNewMailCmd !none</code><br/>
+Bang to be executed when there is new mail.</p>
+<p><code>AcidMailNoMailCmd !none</code><br/>
+Bang to be executed when you don't have any mail and there was mail before.</p>
+<p><code>AcidMailFoundMailCmd !none</code><br/>
+Bang fired if it finds mail, regardless of the value before.</p>
+<p><code>AcidMailZeroMailCmd !none</code><br/>
+Bang fired if it finds 0 mail even if there was 0 before checking.</p>
+<p><code>AcidMailCheckMailCmd !none</code><br/>
+
+Bang to be executed when AcidMail checks for new mail.</p>
+<p><code>AcidMailDoneCheckCmd !none</code><br/>
+Bang to be executed when AcidMail is done checking.</p>
+<p><code>AcidMailErrorCmd !none</code><br/>
+Bang to be executed if an error has occured.</p>
+<a name="bangs"></a>
+<h1>!Bang Commands</h1>
+<p><code>!AcidMailCheckMail</code><br/>
+Checks mail on all servers.</p>
+
+<p><code>!AcidMailClearNew</code><br/>
+Resets number of mails to 0 and runs NoMailCmd.</p>
+<a name="evars"></a>
+<h1>Exported Variables (evars)</h1>
+<p><code>$AcidMailNumMail$</code><br/>
+Exports the number of mails found on last mailcheck.</p>
+<p><code>$AcidMail&lt;name&gt;$</code><br/>
+Exports the number of mails found for the defined mailbox.</p>
+
+<a name="example"></a>
+<h1>Example Configuration</h1>
+<pre>*AcidMailbox Home
+HomeType pop3
+HomeServer mail.server.com
+HomeUser acidfire
+
+*AcidMailbox School imap studentweb.student.nl student1337357
+
+AcidMailTimer 5
+
+AcidMailMailCmd !LabelShow maillab
+AcidMailNoMailCmd !LabelHide maillab
+
+*Label Maillab
+MaillabPaintingMode .singlecolor
+MaillabColor 255 255 255
+MaillabFontColor 0 0 0
+MaillabFontHeight 21
+MaillabX -31
+MaillabY 20
+MaillabWidth 30
+MaillabHeight 21
+MaillabStartHidden
+MaillabOnLeftClick &quot;$Email$&quot;
+MaillabOnRightClick !AcidMailClearNew
+MaillabText &quot;[exportedevar('AcidMailNumMail')]&quot;
+MaillabTooltip &quot;home: [exportedevar('AcidMailHome')] school: [exportedevar('AcidMailSchool')]&quot;
+</pre>
+<a name="ssl"></a>
+<h1>Poor mans SSL</h1>
+<p>(by xAFFE)</p>
+
+<p>If you have ssh access to your mail server you can use the portforwarding feature of ssh to get a secure connection.</p>
+<p>If you use the console ssh-client just append '-L localhost:143:localhost:143' to the prompt. If you use putty please reffer to <a href="http://www.cs.uu.nl/technical/services/ssh/putty/puttyfw.html" class="ExternalLink" target="_blank">this howto</a>.</p>
+<p>After that you just need to connect to localhost and everything is secure and fine. If you use pop3 dont forget to exchange the port 143 with port 110.</p>
+<a name="todo"></a>
+<h1>Still to be done:</h1>
+<p>- Natively support secure POP3 and IMAP.<br/>
+- Real notifications instead of logging. (needs core update)</p>
+<a name="version"></a>
+<h1>Version History</h1>
+
+<p>0.6: New syntax<br/>
+     - Added new multiline syntax. This was needed because the single line syntax would become unreadable if new features were added.<br/>
+     - Added the ability to specify which folder should be checked when using imap.<br/>
+     - Some timer/window changes along with other minor fixes.</p>
+<p>0.5: First version with IMAP support<br/>
+     - IMAP support.<br/>
+     - Huge code rewrite/reorganisation -&gt; lots of small bugs fixed and more efficient and secure code.</p>
+<p>0.3: First public beta<br/>
+     - Encrypted password storage: passwords no longer need to be in .rc files, a dialog will ask for them the first time.<br/>
+     - Added support for connecting to ports other than 110.<br/>
+     - Added support for connecting to an ip address.<br/>
+     - Removed AcidMailNoMessageBoxes, since there aren't any message boxes (yet).<br/>
+     - Made AcidMailErrorCmd work.<br/>
+     - Made ErrorHandler which posts errors in the logfile.<br/>
+     - Added AcidMailFoundMailCmd: fired if it finds mail, regardless of the value before.<br/>
+     - Added AcidMailZeroMailCmd: fired if it finds 0 mail even if there was 0 before checking.<br/>
+     - Misconfiguring *lines shouldn't crash AcidMail as easily as before.</p>
+<p>0.2: Beta release<br/>
+     - Fixed !AcidMailClearNew not working.<br/>
+     - Disabled checking mail when timer is set to 0.</p>
+<p>0.1: First beta release</p>
+<a name="author"></a>
+<h1>Author</h1>
+<p><em>Author: Acidfire</em><br/>
+<em>Email: acidfire AT litestep DOT com</em></p>
+<div class="nav-top"><a href="#topglobal">&#8593;</a></div>
+
+</div>
+</td>
+</tr>
+
+</table>
+	</body>
+</html>

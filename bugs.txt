@@ -1,0 +1,12 @@
+bugs:
+
+Connection errors report socket error numbers, but there is no socket error, report response or failure instead.
+
+todo: 
+
+Getting headlines for imap
+Set SHSetUnreadMailCount
+
+Rework error reporting system.
+if you make per mailbox bangs, put global bangs in main.cpp and mailbox bangs in mailbox.h (not check/clearmail! has to be in acidmail or main)
+secure pop3 and secure imap

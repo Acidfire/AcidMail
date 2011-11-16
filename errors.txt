@@ -1,0 +1,8 @@
+case 2 "Could not find host"
+case 3 "No host entered for mailbox"
+case 6 "Could not connect to host"
+case 7 "Connection error with mailbox"
+case 8 "Invalid username/password for mailbox
+case 9 "Invalid mailbox type for mailbox"
+base 10 "Unexpected response from"
+default "An error accured with mailbox"

@@ -7,7 +7,7 @@
 struct Mail
 {
 	Mail();
-	unsigned int iNumMail;
+	unsigned iNumMail;
 	bool bError;
 };
 
@@ -23,7 +23,7 @@ struct Error
 class Mailbox
 {
 public:
-	Mailbox(char* name, char* type, char* server, char* user, char* pass);
+	Mailbox(char* name, unsigned numSubjects);
 	~Mailbox();
 	Mail CheckMail();
 	void ClearMail();
@@ -37,9 +37,9 @@ private:
 	void GetPass();
 	void ErrorHandler(Error& errstc);
 
-	char sName[64], sType[64], sServer[128], sUser[64], sPass[64], sEvar[72],
-		sSetting[72], sFolder[32], sErrorVar[72], sPort[8];
-	unsigned int iSubjects;
+	char sName[64], sType[64], sServer[128], sUser[64], sPass[64],
+		sEvar[72], sSetting[72], sFolder[32], sErrorVar[72], sPort[8];
+	unsigned iSubjects;
 	Mail mail;
 	SOCKET s;
 };

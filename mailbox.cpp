@@ -1,4 +1,4 @@
-#include "..\lsapi.h"
+#include "..\litestep248\lsapi\lsapi.h"
 #include <string.h>
 #include <winerror.h>
 #include <windows.h>
@@ -12,58 +12,37 @@
 // Globals
 BOOL CALLBACK GetPassProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM /* lParam */);
 extern HINSTANCE hwndInstance;
-extern Acidmail *acidmail;
 char temp_name[64] = {0}, temp_pass[64] = {0};
 
-Mailbox::Mailbox(char* name, char* type, char* server, char* user, char* pass):
+Mailbox::Mailbox(char* name, unsigned numSubjects):
 	mail()
 {
 	// Copy args
 	strcpy(sName, name);
-	if (*type) // One line syntax
-	{
-		strcpy(sType, type);
-		strcpy(sUser, user);
-		char* p = strtok(server, ":");
-		strcpy(sServer, p);
-		p = strtok(NULL, "");
-		if (p) strcpy(sPort, p);
-		else if (!strcmp("imap", sType)) strcpy(sPort, "143");
-		else strcpy(sPort, "110");
-		strcpy(sPass, pass);
-		strcpy(sFolder, "inbox"); // Can't be set with this syntax
-	}
-	else // Multiline syntax
+	iSubjects = numSubjects;
+	
+	// Copy the rest of the args derived from the mailbox name
+	strcpy(sSetting, name);
+	strcat(sSetting, "server");
+	if(GetRCString(sSetting, sServer, NULL, MAX_LINE_LENGTH))
 	{
 		strcpy(sSetting, name);
-		strcat(sSetting, "server");
-		if(!GetRCString(sSetting, sServer, NULL, MAX_LINE_LENGTH))
-		{
-			ErrorHandler(Error(false, LOG_ERROR, "No host found in config files", NULL));
-			mail.bError = true;
-		}
-		else
-		{
-			strcpy(sSetting, name);
-			strcat(sSetting, "type");
-			GetRCString(sSetting, sType, "pop3", MAX_LINE_LENGTH);
-			strcpy(sSetting, name);
-			strcat(sSetting, "user");
-			GetRCString(sSetting, sUser, "anonymous", MAX_LINE_LENGTH);
-			strcpy(sSetting, name);
-			strcat(sSetting, "port");
-			if (!strcmp("imap", sType)) GetRCString(sSetting, sPort, "143", MAX_LINE_LENGTH);
-			else GetRCString(sSetting, sPort, "110", MAX_LINE_LENGTH);
-			strcpy(sSetting, name);
-			strcat(sSetting, "password");
-			GetRCString(sSetting, sPass, "", MAX_LINE_LENGTH);
-			strcpy(sSetting, name);
-			strcat(sSetting, "folder");
-			GetRCString(sSetting, sFolder, "inbox", MAX_LINE_LENGTH);
-		}
-	}
-	if (!mail.bError)
-	{
+		strcat(sSetting, "type");
+		GetRCString(sSetting, sType, "pop3", MAX_LINE_LENGTH);
+		strcpy(sSetting, name);
+		strcat(sSetting, "user");
+		GetRCString(sSetting, sUser, "anonymous", MAX_LINE_LENGTH);
+		strcpy(sSetting, name);
+		strcat(sSetting, "port");
+		if (!strcmp("imap", sType)) GetRCString(sSetting, sPort, "143", MAX_LINE_LENGTH);
+		else GetRCString(sSetting, sPort, "110", MAX_LINE_LENGTH);
+		strcpy(sSetting, name);
+		strcat(sSetting, "password");
+		GetRCString(sSetting, sPass, "", MAX_LINE_LENGTH);
+		strcpy(sSetting, name);
+		strcat(sSetting, "folder");
+		GetRCString(sSetting, sFolder, "inbox", MAX_LINE_LENGTH);
+
 		// If no password was found in config, get it from database/dialog
 		if (!(*sPass)) GetPass();
 
@@ -73,7 +52,12 @@ Mailbox::Mailbox(char* name, char* type, char* server, char* user, char* pass):
 		LSSetVariable(sEvar, "0");
 		strcpy(sErrorVar, sEvar);
 		strcat(sErrorVar, "Error");
-		LSSetVariable(sErrorVar, "none");
+		LSSetVariable(sErrorVar, "none");		
+	}
+	else
+	{
+		ErrorHandler(Error(false, LOG_ERROR, "No host found in config files", NULL));
+		mail.bError = true;		
 	}
 }
 
@@ -148,7 +132,7 @@ Mail Mailbox::CheckMail()
 
 int Mailbox::Pop3Check(char*& buf)
 {
-	unsigned int ans = 0;
+	unsigned ans = 0;
 
 	sprintf(buf, " ");
 	PopCmd(buf);
@@ -169,11 +153,15 @@ int Mailbox::Pop3Check(char*& buf)
 		ans = atoi(strtok(NULL, " "));
 
 		// Get subjects and write to vars
-		iSubjects = acidmail->iNumSubjects;
-		bool bSub = iSubjects < ans;
-		for (int ansc = ans; (iSubjects > 0) && (ansc > 0); iSubjects--, ansc--)
+		int subs;
+		if (iSubjects < ans)
+			subs = iSubjects;
+		else
+			subs = ans;
+
+		for (int ansc = ans; subs > 0; subs--)
 		{
-			sprintf(buf, "top %d 0\r\n", ansc);
+			sprintf(buf, "top %d 0\r\n", subs);
 			PopCmd(buf);
 			char tmpbuf[8];
 			recv(s, tmpbuf, 8, 0);
@@ -183,10 +171,7 @@ int Mailbox::Pop3Check(char*& buf)
 				strtok(ptr, " ");
 				ptr = strtok(NULL, "\r");
 				char sEvarSub[140], sSubject[1024];
-				if(bSub)
-					sprintf(sEvarSub, "%s%s%d", sEvar, "Sub", iSubjects);
-				else
-					sprintf(sEvarSub, "%s%s%d", sEvar, "Sub", ansc);
+				sprintf(sEvarSub, "%s%s%d", sEvar, "Sub", subs);
 				sprintf(sSubject, "\"%s\"", ptr);
 				LSSetVariable(sEvarSub, sSubject);
 			}
@@ -213,7 +198,7 @@ void Mailbox::PopCmd(char*& buf)
 
 int Mailbox::ImapCheck(char*& buf)
 {
-	unsigned int ans = 0;
+	unsigned ans = 0;
 
 	sprintf(buf, " ");
 	ImapCmd(buf);
@@ -229,18 +214,19 @@ int Mailbox::ImapCheck(char*& buf)
 
 	send(s, "a03 logout\r\n", 12, 0);
 
-	char * ptr = strstr(buf, "RECENT");
+/*	char * ptr = strstr(buf, "RECENT");
 	if(ptr)
 	{
 		ptr-=3;
 		while (*ptr != ' ')
 			ptr-=1;
 		ans = atoi(strtok(ptr, " "));
-		for (iSubjects = acidmail->iNumSubjects; iSubjects > 0; iSubjects--)
+		for (int subs = iSubjects; subs > 0; subs--)
 		{
 
 		}
-	}
+	}*/
+
 	else throw Error(true, LOG_ERROR, "Didn't get number of mail:", strtok(buf, "\r"));
 	return ans;
 }

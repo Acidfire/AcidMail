@@ -1,24 +1,22 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "acidmail", "acidmail.vcproj", "{259DDE68-C7E9-4969-AE16-D66D4088C313}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "acidmail", "acidmail.vcxproj", "{259DDE68-C7E9-4969-AE16-D66D4088C313}"
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		CustDebug = CustDebug
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CustDebug|Win32 = CustDebug|Win32
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{259DDE68-C7E9-4969-AE16-D66D4088C313}.CustDebug.ActiveCfg = CustDebug|Win32
-		{259DDE68-C7E9-4969-AE16-D66D4088C313}.CustDebug.Build.0 = CustDebug|Win32
-		{259DDE68-C7E9-4969-AE16-D66D4088C313}.Debug.ActiveCfg = Debug|Win32
-		{259DDE68-C7E9-4969-AE16-D66D4088C313}.Debug.Build.0 = Debug|Win32
-		{259DDE68-C7E9-4969-AE16-D66D4088C313}.Release.ActiveCfg = Release|Win32
-		{259DDE68-C7E9-4969-AE16-D66D4088C313}.Release.Build.0 = Release|Win32
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{259DDE68-C7E9-4969-AE16-D66D4088C313}.CustDebug|Win32.ActiveCfg = CustDebug|Win32
+		{259DDE68-C7E9-4969-AE16-D66D4088C313}.CustDebug|Win32.Build.0 = CustDebug|Win32
+		{259DDE68-C7E9-4969-AE16-D66D4088C313}.Debug|Win32.ActiveCfg = Debug|Win32
+		{259DDE68-C7E9-4969-AE16-D66D4088C313}.Debug|Win32.Build.0 = Debug|Win32
+		{259DDE68-C7E9-4969-AE16-D66D4088C313}.Release|Win32.ActiveCfg = Release|Win32
+		{259DDE68-C7E9-4969-AE16-D66D4088C313}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

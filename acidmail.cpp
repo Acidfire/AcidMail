@@ -53,28 +53,29 @@ Acidmail::~Acidmail()
 
 int Acidmail::GetMailboxes()
 {
-	LPVOID f = LCOpen(NULL);
+	FILE* f = LCOpen(NULL);
 	if(f != NULL)
 	{
 		char lineBuffer[MAX_LINE_LENGTH] = {0};
+		int count = 0;
 
-		while(LCReadNextConfig(f, "*AcidMailbox", lineBuffer, MAX_LINE_LENGTH))
+		for(;LCReadNextConfig(f, "*AcidMailbox", lineBuffer, MAX_LINE_LENGTH); count++)
 		{
-			char temp[16], name[64], type[64], server[128], user[64], pass[64] = {0};
-			char *buffers[] = {temp, name ,type, server, user};
+			char temp[16], name[64], rest[MAX_LINE_LENGTH-80] = {0};
+			char *buffers[] = {temp, name ,rest};
 			
-			if(LCTokenize(lineBuffer, buffers, 5, pass) >= 2)
+			if(LCTokenize(lineBuffer, buffers, 3, rest) == 2)
 			{
-				Mailbox *newmailbox = new Mailbox(name, type, server, user, pass);
+				Mailbox *newmailbox = new Mailbox(name, iNumSubjects);
 				
-				if ( newmailbox )
+				if (newmailbox)
 				{	
 					mailboxlist.insert(mailboxlist.end(), newmailbox);
 				}
 			}
 		}
 		LCClose(f);
-		return 1;
+		return count;
 	}
 	return 0;
 }

@@ -2,7 +2,7 @@
 #define ACIDMAIL_H
 
 #include <list>
-#include "..\lsapi.h"
+#include "..\litestep248\lsapi\lsapi.h"
 #include "mailbox.h"
 
 class Acidmail
@@ -15,7 +15,7 @@ public:
 	int CheckMailThread();
 	void SetPass(char* server, char* user, char* pass);
 
-	unsigned int iNumSubjects;
+	unsigned iNumSubjects;
 
 private:
 	int GetMailboxes();
@@ -24,7 +24,7 @@ private:
 	std::list<Mailbox*>::iterator mailboxiter;
 	
 	HANDLE CheckThread;
-	unsigned int iNumMsgs, iNumMsgsOld, iTimer;
+	unsigned iNumMsgs, iNumMsgsOld, iTimer;
 	char sMailCmd[MAX_LINE_LENGTH], sNewMailCmd[MAX_LINE_LENGTH], 
 		sNoMailCmd[MAX_LINE_LENGTH], sZeroMailCmd[MAX_LINE_LENGTH],
 		sFoundMailCmd[MAX_LINE_LENGTH], sCheckMailCmd[MAX_LINE_LENGTH],

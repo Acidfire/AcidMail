@@ -1,5 +1,9 @@
 Change Log:
 
+16-11-11: -Removed single line config
+		  -Simplified pop3 subject parsing
+		  -Removed external to acidmail instance in mailbox
+		  -Skip timer if there are no mailboxes
 15-03-09: -Unregistering windowclass on failure of window creation.
 09-06-08: -Made pop3 subject checking work.
 		  -Fixed bug where AcidMail could go into an endless loop if a connection error

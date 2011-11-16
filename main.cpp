@@ -1,4 +1,4 @@
-#include "..\lsapi.h"
+#include "..\litestep248\lsapi\lsapi.h"
 #include <windows.h>
 #include "main.h"
 #include "version.h"
